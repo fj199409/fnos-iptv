@@ -1,0 +1,4 @@
+#!/bin/bash
+# 安装初始化脚本
+mkdir -p /var/apps/fnnas.iptv/data/logos
+chmod 755 /var/apps/fnnas.iptv/data
