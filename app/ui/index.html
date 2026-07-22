@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>飞牛IPTV</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js" onerror="this.remove();var s=document.createElement('script');s.src='https://gcore.jsdelivr.net/npm/hls.js@1/dist/hls.min.js';s.onerror=function(){window._hlsLoadFailed=true};document.head.appendChild(s)"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#000000;--card:#111111;--card2:#1a1a1a;--border:#222222;--text:#e2e8f0;--text2:#888888;--accent:#3b82f6;--green:#22c55e;--red:#ef4444;--orange:#f5a623}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,"Noto Sans CJK SC","Microsoft YaHei",sans-serif;overflow:hidden;height:100vh;height:100dvh;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#333333;border-radius:2px}
+/* 顶栏 */
+.topbar{height:48px;background:var(--card);display:flex;align-items:center;padding:0 12px;gap:8px;border-bottom:1px solid var(--border);flex-shrink:0;z-index:10}
+.logo{font-size:15px;font-weight:700;color:var(--accent);white-space:nowrap}
+.logo span{font-size:10px;color:var(--text2);font-weight:400}
+.topbar-btn{padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--text2);transition:all .2s;white-space:nowrap}
+.topbar-btn:hover{background:var(--card2);color:var(--text)}
+.topbar-btn.active{background:var(--accent);color:#fff}
+.topbar-right{margin-left:auto;display:flex;gap:4px;align-items:center}
+.status-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--card2);color:var(--text2)}
+.status-badge.ok{color:var(--green)}
+.status-badge.err{color:var(--red)}
+/* 主布局 */
+.main{display:flex;flex:1;overflow:hidden}
+/* 频道侧栏 */
+.sidebar{width:280px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:transform .3s}
+@media(max-width:768px){.sidebar{position:absolute;left:0;top:0;bottom:0;z-index:20;transform:translateX(-100%)}.sidebar.show{transform:translateX(0)}}
+.sidebar-header{padding:8px 12px;border-bottom:1px solid var(--border)}
+.search-box{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-size:12px}
+.search-box:focus{outline:none;border-color:var(--accent)}
+.group-tabs{display:flex;gap:4px;padding:8px 12px;overflow-x:auto;border-bottom:1px solid var(--border)}
+.group-tab{padding:4px 10px;border-radius:12px;font-size:11px;cursor:pointer;color:var(--text2);white-space:nowrap;transition:all .2s;background:var(--card2)}
+.group-tab:hover{color:var(--text)}
+.group-tab.active{background:var(--accent);color:#fff}
+.channel-list{flex:1;overflow-y:auto;padding:4px 0}
+.channel-item{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.channel-item:hover{background:var(--card2)}
+.channel-item.active{background:var(--card2);border-left-color:var(--accent)}
+.channel-logo{width:40px;height:40px;border-radius:6px;background:var(--card2);flex-shrink:0;object-fit:contain;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text2)}
+.channel-info{flex:1;min-width:0}
+.channel-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.channel-now{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+/* 播放区 */
+.player-area{flex:1;display:flex;flex-direction:column;position:relative;background:#000;min-width:0}
+#videoPlayer{flex:1;width:100%;height:100%;background:#000;object-fit:contain}
+.video-loading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;text-align:center}
+.spinner{display:inline-block;width:36px;height:36px;border:3px solid rgba(255,255,255,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.video-loading p{color:var(--text2);font-size:12px;margin-top:8px}
+/* 节目单面板 */
+.epg-panel{width:300px;background:var(--card);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:transform .3s}
+.epg-panel.hidden{display:none}
+@media(max-width:1024px){.epg-panel{position:absolute;right:0;top:0;bottom:0;z-index:20;transform:translateX(100%)}.epg-panel.hidden{display:flex}.epg-panel.show{transform:translateX(0)}.epg-panel.hidden.show{transform:translateX(100%)}}
+.epg-header{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.epg-title{font-size:13px;font-weight:600}
+.epg-close{background:var(--card2);border:none;color:var(--text);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px}
+.epg-list{flex:1;overflow-y:auto;padding:4px 0}
+.epg-item{padding:8px 12px;border-bottom:1px solid var(--border)}
+.epg-time{font-size:11px;color:var(--accent);font-variant-numeric:tabular-nums}
+.epg-name{font-size:12px;margin-top:2px}
+.epg-desc{font-size:10px;color:var(--text2);margin-top:2px;line-height:1.4}
+.epg-item.now{background:var(--card2);border-left:3px solid var(--green)}
+.epg-empty{text-align:center;padding:40px 16px;color:var(--text2);font-size:12px}
+/* 播放器控制栏 */
+.pc-bar{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.9));padding:8px 12px;display:flex;align-items:center;gap:6px;z-index:10;padding-bottom:env(safe-area-inset-bottom,8px)}
+.pc-bar.hidden{opacity:0;pointer-events:none;transition:opacity .3s}
+.pc-btn{background:transparent;border:none;color:#fff;padding:6px 8px;border-radius:4px;cursor:pointer;font-size:14px;min-width:32px;min-height:32px}
+.pc-btn:hover{background:rgba(255,255,255,.15)}
+.pc-info{color:#fff;font-size:11px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-time{color:#fff;font-size:11px;font-variant-numeric:tabular-nums;min-width:40px;text-align:center}
+/* 设置弹窗 */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:100;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:12px;padding:20px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto}
+.modal h2{font-size:16px;margin-bottom:14px}
+.modal-section{margin-bottom:16px}
+.modal-section h3{font-size:13px;margin-bottom:8px;color:var(--text2)}
+.modal-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-size:13px;margin-bottom:6px}
+.modal-input:focus{outline:none;border-color:var(--accent)}
+.modal-btn{background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px}
+.modal-btn:hover{background:#2563eb}
+.modal-btn-outline{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.modal-btns{display:flex;gap:8px;flex-wrap:wrap}
+.modal-close{float:right;cursor:pointer;color:var(--text2);font-size:18px}
+.channel-edit-list{max-height:200px;overflow-y:auto;margin-top:8px}
+.channel-edit-item{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.channel-edit-item .ce-name{flex:1}
+.channel-edit-item .ce-del{color:var(--red);cursor:pointer;padding:4px 8px;border-radius:4px;font-size:11px}
+.channel-edit-item .ce-del:hover{background:rgba(239,68,68,.15)}
+/* 移动端遮罩 */
+.mobile-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:15;display:none}
+.mobile-overlay.show{display:block}
+@media(min-width:769px){.mobile-overlay{display:none!important}}
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--accent);color:var(--text);padding:10px 20px;border-radius:8px;font-size:13px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+/* 移动端按钮 */
+.mobile-menu-btn{display:none}
+@media(max-width:768px){.mobile-menu-btn{display:flex;align-items:center;justify-content:center;background:var(--card2);border:none;color:var(--text);width:34px;height:34px;border-radius:6px;cursor:pointer;font-size:16px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+  <div class="logo">飞牛IPTV</div>
+  <div class="topbar-btn" onclick="toggleEpg()">节目单</div>
+  <div class="topbar-btn" onclick="showSettings()">设置</div>
+  <div class="topbar-right">
+    <span class="status-badge" id="phpStatus">检查中</span>
+    <div class="topbar-btn" onclick="logout()" title="退出登录">退出</div>
+  </div>
+</div>
+<div class="main">
+  <!-- 频道侧栏 -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <input class="search-box" id="searchInput" placeholder="搜索频道..." oninput="filterChannels()">
+    </div>
+    <div class="group-tabs" id="groupTabs"></div>
+    <div class="channel-list" id="channelList">
+      <div style="text-align:center;padding:20px;color:var(--text2);font-size:12px">加载中...</div>
+    </div>
+  </div>
+  
+  <!-- 播放区 -->
+  <div class="player-area" id="playerArea">
+    <video id="videoPlayer" playsinline webkit-playsinline></video>
+    <div class="video-loading" id="videoLoading" style="display:none">
+      <div class="spinner"></div>
+      <p id="loadingText">加载中...</p>
+    </div>
+    <div class="pc-bar" id="pcBar">
+      <button class="pc-btn" onclick="togglePlay()">▶</button>
+      <span class="pc-info" id="pcInfo">未选择频道</span>
+      <button class="pc-btn" onclick="prevChannel()">⏮</button>
+      <button class="pc-btn" onclick="nextChannel()">⏭</button>
+      <button class="pc-btn" onclick="toggleFs()">⛶</button>
+    </div>
+  </div>
+  
+  <!-- 节目单 -->
+  <div class="epg-panel" id="epgPanel">
+    <div class="epg-header">
+      <span class="epg-title" id="epgChannelName">节目单</span>
+      <button class="epg-close" onclick="toggleEpg()">×</button>
+    </div>
+    <div class="epg-list" id="epgList">
+      <div class="epg-empty">选择频道后显示节目单</div>
+    </div>
+  </div>
+</div>
+
+<!-- 移动端遮罩 -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
+
+<!-- 设置弹窗 -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h2>设置 <span class="modal-close" onclick="hideSettings()">×</span></h2>
+    
+    <div class="modal-section">
+      <h3>PHP状态</h3>
+      <p id="phpInfo" style="font-size:12px;color:var(--text2)">检查中...</p>
+      <button class="modal-btn" id="installPhpBtn" onclick="installPhp()" style="margin-top:8px;display:none">一键安装PHP</button>
+      <button class="modal-btn modal-btn-outline" id="uninstallPhpBtn" onclick="uninstallPhp()" style="margin-top:8px;display:none">卸载PHP</button>
+      <button class="modal-btn" onclick="runDiagnose()" style="margin-top:8px">运行诊断</button>
+      <div id="diagResult" style="margin-top:8px;display:none;font-size:12px;max-height:300px;overflow-y:auto;background:var(--card2);border-radius:8px;padding:8px"></div>
+    </div>
+    
+    <div class="modal-section">
+      <h3>EPG节目单源</h3>
+      <input class="modal-input" id="epgUrlInput" placeholder="EPG XML URL">
+      <button class="modal-btn" onclick="saveSettings()">保存</button>
+      <button class="modal-btn modal-btn-outline" onclick="refreshEpg()">刷新EPG</button>
+    </div>
+    
+    <div class="modal-section">
+      <h3>添加自定义频道</h3>
+      <input class="modal-input" id="newChName" placeholder="频道名称">
+      <input class="modal-input" id="newChUrl" placeholder="M3U8/M3U播放地址">
+      <input class="modal-input" id="newChLogo" placeholder="台标URL（可选）">
+      <input class="modal-input" id="newChGroup" placeholder="分组（可选，默认：自定义）">
+      <button class="modal-btn" onclick="addChannel()">添加</button>
+    </div>
+    
+    <div class="modal-section">
+      <h3>导入M3U播放列表</h3>
+      <input class="modal-input" id="m3uUrl" placeholder="M3U播放列表URL">
+      <button class="modal-btn" onclick="importM3u()">从URL导入</button>
+      <button class="modal-btn modal-btn-outline" onclick="document.getElementById('m3uFile').click()">从文件导入</button>
+      <input type="file" id="m3uFile" accept=".m3u,.m3u8,.txt" style="display:none" onchange="importM3uFile(event)">
+    </div>
+    
+    <div class="modal-section">
+      <h3>独立Web服务（IP+端口访问）</h3>
+      <p id="webServerInfo" style="font-size:12px;color:var(--text2)">检查中...</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <button class="modal-btn" id="wsStartBtn" onclick="wsStart()">启动服务</button>
+        <button class="modal-btn modal-btn-outline" id="wsStopBtn" onclick="wsStop()">停止服务</button>
+        <button class="modal-btn modal-btn-outline" onclick="wsRestart()">重启服务</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:end">
+        <div style="flex:1">
+          <label style="font-size:11px;color:var(--text2)">端口号</label>
+          <input class="modal-input" id="wsPortInput" placeholder="8899" style="margin-top:4px">
+        </div>
+        <button class="modal-btn modal-btn-outline" onclick="wsSetPort()">修改端口</button>
+      </div>
+      <div id="wsLog" style="margin-top:8px;display:none;font-size:11px;max-height:150px;overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px;white-space:pre-wrap;word-break:break-all;color:var(--text2)"></div>
+    </div>
+
+    <div class="modal-section">
+      <h3>M3U8 订阅（第三方软件播放）</h3>
+      <p style="font-size:12px;color:var(--text2)">在第三方播放器中输入以下地址即可订阅全部频道</p>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:stretch">
+        <input class="modal-input" id="m3uSubUrl" readonly style="flex:1;font-size:12px;color:var(--green)">
+        <button class="modal-btn" onclick="copyM3uUrl()">点击复制</button>
+      </div>
+      <div style="margin-top:6px;font-size:11px;color:var(--text2)">
+        <span id="m3uStatus">生成中...</span>
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <h3>修改登录密码</h3>
+      <input class="modal-input" type="password" id="oldPassword" placeholder="原密码">
+      <input class="modal-input" type="password" id="newPassword" placeholder="新密码">
+      <input class="modal-input" type="password" id="confirmPassword" placeholder="确认新密码">
+      <button class="modal-btn" onclick="changePassword()">修改密码</button>
+    </div>
+
+    <div class="modal-section">
+      <h3>自定义频道管理</h3>
+      <div class="channel-edit-list" id="customChList">
+        <div style="color:var(--text2);font-size:12px">暂无自定义频道</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var G={
+  cgi:(function(){var p=location.pathname;var i=p.indexOf('index.cgi');if(i>=0)return p.substring(0,i+9);return'';})(),
+  channels:{ysp:[],custom:[]},
+  filteredChannels:[],
+  currentGroup:'全部',
+  currentChannelIdx:-1,
+  player:{video:null,hls:null,timer:null,currentUrl:'',stallTimer:null,stallCount:0,lastTime:0,lastProgress:0},
+  epgData:[],
+  epgCache:{}
+};
+function $(id){return document.getElementById(id);}
+
+function api(path,data,method){
+  method=method||'POST';
+  var fb=[];
+  if(data){for(var k in data){if(data[k]!==undefined&&data[k]!==null){fb.push(encodeURIComponent(k)+'='+encodeURIComponent(data[k]));}}}
+  var url=G.cgi+path;
+  var opts={method:method,headers:{'Content-Type':'application/x-www-form-urlencoded'}};
+  if(method==='GET'||method==='HEAD'){
+    if(fb.length){url+=(path.indexOf('?')>=0?'&':'?')+fb.join('&');}
+  }else{
+    opts.body=fb.join('&');
+  }
+  return fetch(url,opts)
+    .then(function(r){return r.text().then(function(t){
+      if(!t||!t.trim())throw new Error('空响应');
+      try{return JSON.parse(t);}catch(e){throw new Error('解析失败: '+t.substring(0,200));}
+    });});
+}
+function proxyLogo(url){
+  if(!url)return'';
+  // github raw 直转 jsdelivr 镜像（gcore 节点国内可用性高），浏览器直连最快
+  if(url.indexOf('raw.githubusercontent.com/')>=0){
+    var m=url.match(/raw\.githubusercontent\.com\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(.+)/);
+    if(m)return 'https://gcore.jsdelivr.net/gh/'+m[1]+'/'+m[2]+'@'+m[3]+'/'+m[4];
+  }
+  // 已是 jsdelivr 镜像则直连
+  if(url.indexOf('jsdelivr.net')>=0)return url;
+  if(url.startsWith('/'))return G.cgi+'/api/logo?url='+encodeURIComponent(url);
+  if(url.startsWith('http'))return G.cgi+'/api/logo?url='+encodeURIComponent(url);
+  return'';
+}
+// 台标加载失败：先回退到 CGI 代理（带本地缓存），再失败则显示首字母
+function logoFallback(img){
+  if(img.dataset.fb==='1'){
+    img.outerHTML='<div class="channel-logo">'+(img.dataset.init||'')+'</div>';
+    return;
+  }
+  img.dataset.fb='1';
+  img.src=G.cgi+'/api/logo?url='+encodeURIComponent(img.dataset.orig);
+}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function showToast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
+
+function logout(){
+  api('/api/logout',{},'POST').then(function(){location.href='/login';}).catch(function(){location.href='/login';});
+}
+
+// ===== 初始化 =====
+function init(){
+  G.player.video=$('videoPlayer');
+  checkStatus();
+  loadChannels();
+  loadSettings();
+  setupPlayerEvents();
+}
+
+function checkStatus(){
+  api('/api/status',{},'GET').then(function(d){
+    var badge=$('phpStatus');
+    if(d.php_found&&d.ysp_exists){
+      badge.textContent='PHP OK '+d.ysp_channels+'频道';
+      badge.className='status-badge ok';
+    }else{
+      badge.textContent=d.php_found?'ysp.php缺失':'PHP未安装';
+      badge.className='status-badge err';
+    }
+    var info=$('phpInfo');
+    if(info){
+      info.innerHTML='PHP: '+(d.php_found?'<span style="color:var(--green)">'+esc(d.php_binary)+'</span>':'<span style="color:var(--red)">未安装</span>')+
+        '<br>ysp.php: '+(d.ysp_exists?'<span style="color:var(--green)">存在</span>':'<span style="color:var(--red)">缺失</span>')+
+        '<br>央视频频道: '+d.ysp_channels+' | 自定义频道: '+d.custom_channels;
+    }
+    // PHP未安装时显示一键安装按钮
+    var installBtn=$('installPhpBtn');
+    if(installBtn){
+      installBtn.style.display=d.php_found?'none':'block';
+    }
+    // PHP已安装时显示卸载按钮
+    var uninstallBtn=$('uninstallPhpBtn');
+    if(uninstallBtn){
+      uninstallBtn.style.display=d.php_found?'block':'none';
+    }
+  }).catch(function(){
+    $('phpStatus').textContent='连接失败';$('phpStatus').className='status-badge err';
+  });
+}
+
+// ===== 频道列表 =====
+function loadChannels(){
+  api('/api/channels',{},'GET').then(function(d){
+    G.channels=d;
+    renderGroups();
+    renderChannels();
+  }).catch(function(e){
+    $('channelList').innerHTML='<div style="text-align:center;padding:20px;color:var(--red);font-size:12px">加载失败: '+esc(e.message)+'</div>';
+  });
+}
+
+function renderGroups(){
+  var groups={'全部':0};
+  G.channels.ysp.forEach(function(c){groups[c.group]=(groups[c.group]||0)+1;groups['全部']++;});
+  G.channels.custom.forEach(function(c){groups[c.group]=(groups[c.group]||0)+1;groups['全部']++;});
+  var h='';
+  Object.keys(groups).forEach(function(g){
+    h+='<div class="group-tab'+(G.currentGroup===g?' active':'')+'" onclick="setGroup(\''+esc(g)+'\')">'+esc(g)+'('+groups[g]+')</div>';
+  });
+  $('groupTabs').innerHTML=h;
+}
+
+function setGroup(g){G.currentGroup=g;renderGroups();renderChannels();}
+
+function renderChannels(){
+  var search=$('searchInput').value.toLowerCase().trim();
+  var all=G.channels.ysp.concat(G.channels.custom);
+  G.filteredChannels=all.filter(function(c){
+    if(G.currentGroup!=='全部'&&c.group!==G.currentGroup)return false;
+    if(search&&c.name.toLowerCase().indexOf(search)<0)return false;
+    return true;
+  });
+  var h='';
+  if(G.filteredChannels.length===0){
+    h='<div style="text-align:center;padding:20px;color:var(--text2);font-size:12px">无频道</div>';
+  }else{
+    G.filteredChannels.forEach(function(c,i){
+      var init=esc(c.name.charAt(0));
+      var logoHtml=c.logo_url?'<img class="channel-logo" src="'+proxyLogo(c.logo_url)+'" data-orig="'+esc(c.logo_url)+'" data-init="'+init+'" onerror="logoFallback(this)">':'<div class="channel-logo">'+init+'</div>';
+      var nowProg=G.epgCache[c.id]?'<div class="channel-now">'+esc(G.epgCache[c.id].title||'')+'</div>':'';
+      h+='<div class="channel-item" onclick="playChannel('+i+')" id="ch_'+i+'">'+logoHtml+'<div class="channel-info"><div class="channel-name">'+esc(c.name)+'</div>'+nowProg+'</div></div>';
+    });
+  }
+  $('channelList').innerHTML=h;
+}
+
+function filterChannels(){renderChannels();}
+
+// ===== 播放 =====
+function playChannel(idx){
+  var ch=G.filteredChannels[idx];if(!ch)return;
+  G.currentChannelIdx=idx;
+  // 高亮
+  document.querySelectorAll('.channel-item').forEach(function(el){el.classList.remove('active');});
+  var el=$('ch_'+idx);if(el)el.classList.add('active');
+  // 更新信息
+  $('pcInfo').textContent=ch.name;
+  $('epgChannelName').textContent=ch.name+' 节目单';
+  // 移动端关闭侧栏
+  if(window.innerWidth<=768)toggleSidebar(false);
+  // 加载流
+  $('videoLoading').style.display='block';
+  $('loadingText').textContent='获取播放地址...';
+  var playseek=ch.playseek||'';
+  api('/api/stream',{id:ch.id,playseek:playseek}).then(function(d){
+    if(d.url){
+      if(location.protocol==='https:')d.url+='&https=1';
+      playVideo(d.url);
+      loadEpgForChannel(ch);
+    }else if(d.need_php){
+      $('videoLoading').style.display='none';
+      showToast('PHP未安装，请打开设置点击一键安装');
+      setTimeout(function(){showSettings();},1500);
+    }else{
+      $('videoLoading').style.display='none';
+      showToast('获取播放地址失败: '+(d.error||'未知错误'));
+    }
+  }).catch(function(e){
+    $('videoLoading').style.display='none';
+    showToast('错误: '+e.message);
+  });
+}
+
+function playVideo(url){
+  var v=G.player.video;
+  if(G.player.hls){G.player.hls.destroy();G.player.hls=null;}
+  v.src='';v.load();
+  G.player.currentUrl=url;
+  G.player.stallCount=0;
+  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  if(url.indexOf('m3u8')>=0||url.indexOf('mpegurl')>=0||url.indexOf('blob:')===0){
+    if(typeof Hls!=='undefined'&&Hls.isSupported()){
+      var hlsRetryCount=0;
+      G.player.hls=new Hls({
+        maxBufferLength:30,
+        manifestLoadingMaxRetry:6,manifestLoadingRetryDelay:500,
+        levelLoadingMaxRetry:6,levelLoadingRetryDelay:500,
+        fragLoadingMaxRetry:10,fragLoadingRetryDelay:500,
+        enableWorker:true
+      });
+      G.player.hls.loadSource(url);G.player.hls.attachMedia(v);
+      G.player.hls.on(Hls.Events.MANIFEST_PARSED,function(){hlsRetryCount=0;$('videoLoading').style.display='none';v.play().catch(function(){});});
+      G.player.hls.on(Hls.Events.ERROR,function(e,d){
+        if(d.fatal){
+          if(d.type===Hls.ErrorTypes.NETWORK_ERROR){
+            G.player.hls.startLoad();
+          }else if(d.type===Hls.ErrorTypes.MEDIA_ERROR){
+            G.player.hls.recoverMediaError();
+          }else{
+            $('videoLoading').style.display='none';
+            showToast('播放错误: '+d.type);
+          }
+        }
+      });
+    }else if(isIOS||v.canPlayType('application/vnd.apple.mpegurl')){
+      v.src=url;v.play().catch(function(){});
+    }else{
+      v.src=url;v.play().catch(function(){});
+    }
+  }else{
+    v.src=url;v.play().catch(function(){});
+  }
+  v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');
+  $('videoLoading').style.display='none';
+  showControls();
+  startStallMonitor();
+}
+function startStallMonitor(){
+  if(G.player.stallTimer)clearInterval(G.player.stallTimer);
+  var v=G.player.video;
+  G.player.lastTime=v.currentTime;
+  G.player.lastProgress=Date.now();
+  G.player.stallTimer=setInterval(function(){
+    if(v.paused||v.ended)return;
+    if(Math.abs(v.currentTime-G.player.lastTime)>0.1){
+      G.player.lastTime=v.currentTime;G.player.lastProgress=Date.now();G.player.stallCount=0;
+    }else{
+      var stalled=Date.now()-G.player.lastProgress;
+      if(stalled>20000){
+        G.player.stallCount++;
+        if(G.player.stallCount<=3&&G.player.currentUrl){
+          if(G.player.hls){G.player.hls.destroy();G.player.hls=null;}
+          $('videoLoading').style.display='block';$('loadingText').textContent='重新连接直播流...';
+          playVideo(G.player.currentUrl);
+        }
+      }
+    }
+  },3000);
+}
+
+function setupPlayerEvents(){
+  var v=G.player.video;
+  var area=$('playerArea');
+  v.addEventListener('play',function(){$('pcBar').querySelector('.pc-btn').textContent='⏸';});
+  v.addEventListener('pause',function(){$('pcBar').querySelector('.pc-btn').textContent='▶';});
+  v.addEventListener('error',function(){
+    $('videoLoading').style.display='none';
+    if(window._hlsLoadFailed){
+      showToast('hls.js加载失败，请检查网络连接');
+    }else if(typeof Hls==='undefined'){
+      showToast('播放器未加载，请刷新页面重试');
+    }else{
+      showToast('视频加载失败');
+    }
+  });
+  v.addEventListener('waiting',function(){$('videoLoading').style.display='block';$('loadingText').textContent='缓冲中...';});
+  v.addEventListener('canplay',function(){$('videoLoading').style.display='none';});
+  v.addEventListener('playing',function(){$('videoLoading').style.display='none';G.player.lastProgress=Date.now();});
+  area.addEventListener('mousemove',showControls);
+  area.addEventListener('touchstart',showControls,{passive:true});
+  area.addEventListener('click',function(){showControls();});
+}
+function showControls(){
+  $('pcBar').classList.remove('hidden');
+  clearTimeout(G.player.timer);
+  G.player.timer=setTimeout(function(){if(!G.player.video.paused)$('pcBar').classList.add('hidden');},4000);
+}
+function togglePlay(){var v=G.player.video;if(v.paused)v.play();else v.pause();}
+function toggleFs(){var a=$('playerArea');if(document.fullscreenElement)document.exitFullscreen();else a.requestFullscreen();}
+function prevChannel(){if(G.currentChannelIdx>0)playChannel(G.currentChannelIdx-1);}
+function nextChannel(){if(G.currentChannelIdx<G.filteredChannels.length-1)playChannel(G.currentChannelIdx+1);}
+
+// ===== 侧栏/面板切换 =====
+function toggleSidebar(force){
+  var sb=$('sidebar');var ov=$('mobileOverlay');
+  if(force===false){sb.classList.remove('show');ov.classList.remove('show');return;}
+  sb.classList.toggle('show');ov.classList.toggle('show');
+}
+function toggleEpg(){
+  var p=$('epgPanel');
+  // 桌面端：用hidden类控制显示/隐藏
+  // 移动端：用show类控制滑入/滑出
+  if(window.innerWidth>1024){
+    p.classList.toggle('hidden');
+  }else{
+    p.classList.toggle('show');
+  }
+}
+
+// ===== EPG =====
+function loadEpg(){
+  api('/api/epg',{},'GET').then(function(d){
+    G.epgData=d.data||[];
+    // 为当前频道加载节目单
+    if(G.currentChannelIdx>=0)loadEpgForChannel(G.filteredChannels[G.currentChannelIdx]);
+    // 更新频道列表的当前节目
+    updateChannelNowPrograms();
+  }).catch(function(e){console.log('EPG load failed:',e);});
+}
+
+function updateChannelNowPrograms(){
+  var now=new Date();
+  var nowStr=now.getFullYear()+''+String(now.getMonth()+1).padStart(2,'0')+''+String(now.getDate()).padStart(2,'0')+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0')+String(now.getSeconds()).padStart(2,'0');
+  G.filteredChannels.forEach(function(c){
+    var prog=getCurrentProgram(c.id,nowStr);
+    if(prog){G.epgCache[c.id]={title:prog.title,start:prog.start,stop:prog.stop};}
+  });
+  renderChannels();
+}
+
+function getCurrentProgram(chId,nowStr){
+  var chObj=G.filteredChannels.find(function(c){return c.id===chId});
+  var chName=chObj?chObj.name:'';
+  // 两种规范化方式：频道代号(空格前部分去横杠) 和 完整名称(去空格横杠)
+  var codeName=chName.split(' ')[0].replace(/-/g,'');
+  var fullName=chName.replace(/[-\s]/g,'');
+  for(var i=0;i<G.epgData.length;i++){
+    var p=G.epgData[i];
+    var ch=(p.channel||'').replace(/[-\s]/g,'');
+    // 精确匹配：频道代号 或 完整名称 或 ID
+    if(ch===codeName||ch===fullName||ch===chId){
+      if(p.start<=nowStr&&p.stop>=nowStr)return p;
+    }
+  }
+  return null;
+}
+
+function loadEpgForChannel(ch){
+  if(G.epgData.length===0){loadEpg();return;}
+  // 两种规范化方式：频道代号(空格前部分去横杠) 和 完整名称(去空格横杠)
+  var codeName=ch.name.split(' ')[0].replace(/-/g,'');
+  var fullName=ch.name.replace(/[-\s]/g,'');
+  var progs=G.epgData.filter(function(p){
+    var ch_id=(p.channel||'').replace(/[-\s]/g,'');
+    return ch_id===codeName||ch_id===fullName||ch_id===ch.id;
+  });
+  if(progs.length===0){
+    $('epgList').innerHTML='<div class="epg-empty">无节目单数据</div>';
+    return;
+  }
+  var now=new Date();
+  var nowStr=now.getFullYear()+''+String(now.getMonth()+1).padStart(2,'0')+''+String(now.getDate()).padStart(2,'0')+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0')+String(now.getSeconds()).padStart(2,'0');
+  var h='';
+  progs.forEach(function(p){
+    var isNow=p.start<=nowStr&&p.stop>=nowStr;
+    var timeRange=formatEpgTime(p.start)+' - '+formatEpgTime(p.stop);
+    h+='<div class="epg-item'+(isNow?' now':'')+'"><div class="epg-time">'+timeRange+'</div><div class="epg-name">'+esc(p.title||'')+'</div>'+(p.desc?'<div class="epg-desc">'+esc(p.desc)+'</div>':'')+'</div>';
+  });
+  $('epgList').innerHTML=h;
+}
+
+function formatEpgTime(s){
+  // 格式: 20250625143000+0800 -> 14:30
+  if(!s||s.length<14)return s;
+  return s.substr(8,2)+':'+s.substr(10,2);
+}
+
+function refreshEpg(){
+  showToast('正在刷新EPG...');
+  api('/api/epg',{force:'1'},'GET').then(function(d){
+    G.epgData=d.data||[];
+    showToast('EPG已更新，共'+G.epgData.length+'条节目');
+    if(G.currentChannelIdx>=0)loadEpgForChannel(G.filteredChannels[G.currentChannelIdx]);
+    updateChannelNowPrograms();
+  }).catch(function(e){showToast('EPG刷新失败: '+e.message);});
+}
+
+// ===== 设置 =====
+function loadSettings(){
+  api('/api/settings',{},'GET').then(function(d){
+    if(d.epg_url)$('epgUrlInput').value=d.epg_url;
+  }).catch(function(){});
+}
+function showSettings(){
+  $('settingsModal').classList.add('show');
+  checkStatus();
+  renderCustomChannels();
+  wsCheckStatus();
+  updateM3uUrl();
+}
+
+function updateM3uUrl(){
+  api('/api/web_server',{},'GET').then(function(d){
+    var port=d.status&&d.status.port?d.status.port:8899;
+    var host=location.hostname;
+    var subUrl='http://'+host+':'+port+'/api/m3u';
+    $('m3uSubUrl').value=subUrl;
+    if(!G.cgi){
+      $('m3uStatus').innerHTML='<span style="color:var(--green)">●</span> 订阅地址已生成（HTTP），可直接复制到第三方播放器使用';
+    }else{
+      $('m3uStatus').innerHTML='<span style="color:var(--yellow)">●</span> 订阅地址已生成（HTTP），请确保独立Web服务已启动，第三方软件才能访问';
+    }
+  }).catch(function(){
+    var host=location.hostname;
+    var subUrl='http://'+host+':8899/api/m3u';
+    $('m3uSubUrl').value=subUrl;
+    $('m3uStatus').innerHTML='<span style="color:var(--red)">●</span> 无法获取端口信息，默认使用8899';
+  });
+}
+function copyM3uUrl(){
+  var el=$('m3uSubUrl');
+  el.select();
+  document.execCommand('copy');
+  showToast('订阅地址已复制');
+}
+
+// ===== 独立Web服务管理 =====
+function wsCheckStatus(){
+  api('/api/web_server',{},'GET').then(function(d){
+    var s=d.status;
+    var info=$('webServerInfo');
+    if(s.running){
+      info.innerHTML='<span style="color:var(--green)">● 运行中</span> 端口: <b>'+esc(s.port)+'</b> | PID: '+esc(String(s.pid));
+    }else{
+      info.innerHTML='<span style="color:var(--red)">○ 未运行</span> 配置端口: <b>'+esc(String(s.port))+'</b>';
+    }
+    $('wsPortInput').value=s.port;
+    var logEl=$('wsLog');
+    if(d.log_tail&&d.log_tail.trim()){logEl.style.display='block';logEl.textContent=d.log_tail;}
+  }).catch(function(e){$('webServerInfo').innerHTML='<span style="color:var(--red)">检查失败</span>';});
+}
+function wsStart(){
+  $('wsStartBtn').disabled=true;$('wsStartBtn').textContent='启动中...';
+  api('/api/web_server/start',{},'POST').then(function(d){
+    $('wsStartBtn').disabled=false;$('wsStartBtn').textContent='启动服务';
+    showToast(d.message||d.error||'操作完成');wsCheckStatus();
+  }).catch(function(e){$('wsStartBtn').disabled=false;$('wsStartBtn').textContent='启动服务';showToast('操作失败');});
+}
+function wsStop(){
+  api('/api/web_server/stop',{},'POST').then(function(d){
+    showToast(d.message||d.error||'操作完成');wsCheckStatus();
+  }).catch(function(){showToast('操作失败');});
+}
+function wsRestart(){
+  api('/api/web_server/restart',{},'POST').then(function(d){
+    showToast(d.message||d.error||'操作完成');wsCheckStatus();
+  }).catch(function(){showToast('操作失败');});
+}
+function wsSetPort(){
+  var p=$('wsPortInput').value.trim();
+  if(!p||isNaN(p)||p<1024||p>65535){showToast('请输入有效端口号(1024-65535)');return;}
+  api('/api/web_server/port',{port:p},'POST').then(function(d){
+    showToast(d.message||d.error);if(d.ok)wsCheckStatus();
+  }).catch(function(){showToast('操作失败');});
+}
+function hideSettings(){$('settingsModal').classList.remove('show');}
+
+function installPhp(){
+  var btn=$('installPhpBtn');
+  btn.disabled=true;btn.textContent='正在安装，请耐心等待...';
+  api('/api/install_php',{},'POST').then(function(d){
+    btn.disabled=false;btn.textContent='一键安装PHP';
+    if(d.ok){
+      showToast(d.message);
+      btn.style.display='none';
+      $('uninstallPhpBtn').style.display='block';
+      checkStatus();
+    }else{
+      showToast(d.error||'安装失败');
+      if(d.suggestion){$('phpInfo').innerHTML+='<br><span style="color:var(--text2)">提示: '+esc(d.suggestion)+'</span>';}
+    }
+  }).catch(function(e){
+    btn.disabled=false;btn.textContent='一键安装PHP';
+    showToast('安装失败: '+e.message);
+  });
+}
+function uninstallPhp(){
+  if(!confirm('确认卸载PHP吗？卸载后央视频频道将无法播放。')) return;
+  var btn=$('uninstallPhpBtn');
+  btn.disabled=true;btn.textContent='正在卸载...';
+  api('/api/uninstall_php',{},'POST').then(function(d){
+    btn.disabled=false;btn.textContent='卸载PHP';
+    if(d.ok||d.warning){
+      showToast(d.message);btn.style.display='none';
+      $('installPhpBtn').style.display='block';checkStatus();
+    }else{showToast(d.error||'卸载失败');}
+  }).catch(function(e){
+    btn.disabled=false;btn.textContent='卸载PHP';showToast('卸载失败: '+e.message);
+  });
+}
+function runDiagnose(){
+  var box=$('diagResult');
+  box.style.display='block';box.innerHTML='<span style="color:var(--text2)">正在诊断，请稍候...</span>';
+  api('/api/diagnose',{},'POST').then(function(d){
+    var h='';
+    for(var i=0;i<d.steps.length;i++){
+      var s=d.steps[i];
+      var icon=s.ok?'<span style="color:var(--green)">OK</span>':'<span style="color:var(--red)">FAIL</span>';
+      h+='<div style="margin-bottom:6px;padding:4px 0;border-bottom:1px solid var(--border)"><b>'+icon+' '+esc(s.step)+'</b><br><span style="color:var(--text2);white-space:pre-wrap;word-break:break-all">'+esc(s.msg)+'</span></div>';
+    }
+    h+='<div style="margin-top:8px;font-weight:bold;color:'+(d.ok?'var(--green)':'var(--red)')+'">'+(d.ok?'诊断完成: 全部正常':'诊断完成: 存在问题')+'</div>';
+    box.innerHTML=h;
+  }).catch(function(e){box.innerHTML='<span style="color:var(--red)">诊断失败: '+esc(e.message)+'</span>';});
+}
+function saveSettings(){
+  var url=$('epgUrlInput').value.trim();
+  api('/api/settings',{epg_url:url}).then(function(){showToast('设置已保存');}).catch(function(){showToast('保存失败');});
+}
+
+function changePassword(){
+  var oldPass=$('oldPassword').value;
+  var newPass=$('newPassword').value;
+  var confirmPass=$('confirmPassword').value;
+  if(!oldPass||!newPass||!confirmPass){showToast('请填写所有密码字段');return;}
+  if(newPass!==confirmPass){showToast('两次输入的新密码不一致');return;}
+  if(newPass.length<4){showToast('新密码长度至少4位');return;}
+  api('/api/change_password',{old_password:oldPass,new_password:newPass},'POST').then(function(d){
+    if(d.ok){showToast('密码修改成功');$('oldPassword').value='';$('newPassword').value='';$('confirmPassword').value='';}
+    else{showToast(d.error||'密码修改失败');}
+  }).catch(function(){showToast('密码修改失败');});
+}
+
+function addChannel(){
+  var name=$('newChName').value.trim(),url=$('newChUrl').value.trim();
+  var logo=$('newChLogo').value.trim(),group=$('newChGroup').value.trim()||'自定义';
+  if(!name||!url){showToast('频道名称和URL不能为空');return;}
+  api('/api/channels/add',{name:name,url:url,logo:logo,group:group}).then(function(d){
+    showToast('已添加: '+name);
+    $('newChName').value='';$('newChUrl').value='';$('newChLogo').value='';$('newChGroup').value='';
+    loadChannels();
+    renderCustomChannels();
+  }).catch(function(e){showToast('添加失败: '+e.message);});
+}
+
+function renderCustomChannels(){
+  var list=$('customChList');
+  if(G.channels.custom.length===0){
+    list.innerHTML='<div style="color:var(--text2);font-size:12px">暂无自定义频道</div>';
+    return;
+  }
+  var h='';
+  G.channels.custom.forEach(function(c){
+    h+='<div class="channel-edit-item"><span class="ce-name">'+esc(c.name)+'</span><span class="ce-del" onclick="delChannel(\''+c.id+'\')">删除</span></div>';
+  });
+  list.innerHTML=h;
+}
+
+function delChannel(id){
+  api('/api/channels/delete/'+id,{},'POST').then(function(){
+    showToast('已删除');
+    loadChannels();
+    renderCustomChannels();
+  }).catch(function(e){showToast('删除失败: '+e.message);});
+}
+
+function importM3u(){
+  var url=$('m3uUrl').value.trim();
+  if(!url){showToast('请输入M3U URL');return;}
+  showToast('正在导入...');
+  api('/api/import_m3u',{url:url}).then(function(d){
+    showToast('已导入'+d.imported+'个频道');
+    loadChannels();
+  }).catch(function(e){showToast('导入失败: '+e.message);});
+}
+
+function importM3uFile(e){
+  var file=e.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(){
+    api('/api/import_m3u',{content:reader.result}).then(function(d){
+      showToast('已导入'+d.imported+'个频道');
+      loadChannels();
+    }).catch(function(err){showToast('导入失败: '+err.message);});
+  };
+  reader.readAsText(file);
+}
+
+init();
+// 延迟加载EPG
+setTimeout(loadEpg,3000);
+</script>
+</body>
+</html>
