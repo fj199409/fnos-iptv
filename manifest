@@ -1,0 +1,27 @@
+version="2.1.3"
+appname="fnnas.iptv"
+desc="""飞牛IPTV：
+集成央视频播放源，支持 PHP 一键安装/卸载;
+V2.1.0版本:
+1.新增独立 Web 登录页面，原飞牛桌面 CGI打开方式不受影响;
+2.飞牛桌面打开应用进入设置，找到【独立 Web服务】启动服务；
+3.浏览器打开`http://NAS` IP:8899 默认账号密码 admin、admin123;
+V2.1.1版本:
+4.新增 M3U8 订阅  , 支持M3U8类播放器(如PotPlayer、Kodi、TiiMate等)；
+V2.1.2版本:
+5.新增PID持久化驻存机制；
+V2.1.3版本:
+6.新增多线程访问；"""
+display_name="飞牛IPTV"
+maintainer="最北的北"
+distributor="冰糖葫芦"
+distributor_url=""
+arch="x86_64"
+os_min_version="0.9.0"
+desktop_uidir="ui"
+desktop_applaunchname="fnnas.iptv.Application"
+changelog="v2.1.3: 新增多线程并发访问支持，修复BrokenPipe导致的连接失败问题"
+source="thirdparty"
+install_type=""
+checkport="false"
+disable_authorization_path="true"
