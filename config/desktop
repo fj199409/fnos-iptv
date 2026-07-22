@@ -1,0 +1,8 @@
+{
+    "fnnas.iptv.Application": {
+        "title": "飞牛IPTV",
+        "icon": "icon_256.png",
+        "type": "iframe",
+        "url": "/cgi/ThirdParty/fnnas.iptv/index.cgi/"
+    }
+}
