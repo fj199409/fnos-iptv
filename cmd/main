@@ -1,0 +1,75 @@
+#!/bin/bash
+# 飞牛IPTV - CGI模式 + 独立Web服务器
+DATA_DIR="/var/apps/fnnas.iptv/data"
+SERVER_PORT="8899"
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)/app/ui"
+SERVER_PID="/var/apps/fnnas.iptv/server.pid"
+SERVER_LOG="/var/apps/fnnas.iptv/server.log"
+
+# 检测Python可用性
+PYTHON_BIN=""
+for cmd in python3 python; do
+    if command -v "$cmd" >/dev/null 2>&1; then
+        PYTHON_BIN="$cmd"
+        break
+    fi
+done
+
+case "$1" in
+    start)
+        mkdir -p "$DATA_DIR/logos"
+        chmod 755 "$DATA_DIR"
+        
+        # 启动独立HTTP服务（可选，失败不影响CGI模式）
+        if [ -n "$PYTHON_BIN" ]; then
+            if [ -f "$SERVER_PID" ] && kill -0 "$(cat "$SERVER_PID")" 2>/dev/null; then
+                echo "FNOS IPTV web server already running on port $SERVER_PORT"
+            else
+                rm -f "$SERVER_PID"
+                nohup "$PYTHON_BIN" "$SCRIPT_DIR/server.py" --port "$SERVER_PORT" --data-dir "$DATA_DIR" > "$SERVER_LOG" 2>&1 &
+                echo $! > "$SERVER_PID"
+                sleep 1
+                if kill -0 "$(cat "$SERVER_PID")" 2>/dev/null; then
+                    echo "FNOS IPTV web server started on port $SERVER_PORT"
+                else
+                    echo "Warning: web server failed to start (check $SERVER_LOG)"
+                    rm -f "$SERVER_PID"
+                fi
+            fi
+        else
+            echo "Warning: Python not found, web server will not start"
+        fi
+        echo "FNOS IPTV started (CGI mode ready)"
+        exit 0
+        ;;
+    stop)
+        if [ -f "$SERVER_PID" ]; then
+            PID=$(cat "$SERVER_PID")
+            if kill -0 "$PID" 2>/dev/null; then
+                kill "$PID" 2>/dev/null
+                sleep 1
+                kill -9 "$PID" 2>/dev/null
+            fi
+            rm -f "$SERVER_PID"
+        fi
+        # 同时清理可能残留的server.py进程
+        pkill -f "server.py" 2>/dev/null
+        exit 0
+        ;;
+    status)
+        # CGI模式始终认为应用正常运行
+        # 独立服务器状态仅作为附加信息
+        if [ -f "$SERVER_PID" ] && kill -0 "$(cat "$SERVER_PID")" 2>/dev/null; then
+            echo "running"
+            exit 0
+        else
+            # 即使独立服务器未运行，CGI模式仍然可用
+            echo "running (CGI mode)"
+            exit 0
+        fi
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status}"
+        exit 0
+        ;;
+esac
