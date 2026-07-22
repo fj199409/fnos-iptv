@@ -1,0 +1,698 @@
+{
+  "ysp": [
+    {
+      "id": "cctv1",
+      "name": "CCTV-1 综合",
+      "group": "央视",
+      "cnlid": "2024078201",
+      "livepid": "600001859",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv2",
+      "name": "CCTV-2 财经",
+      "group": "央视",
+      "cnlid": "2024078203",
+      "livepid": "600001860",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv3",
+      "name": "CCTV-3 综艺",
+      "group": "央视",
+      "cnlid": "2024078205",
+      "livepid": "600001861",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv4",
+      "name": "CCTV-4 中文国际",
+      "group": "央视",
+      "cnlid": "2024078207",
+      "livepid": "600001862",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv5",
+      "name": "CCTV-5 体育",
+      "group": "央视",
+      "cnlid": "2024078209",
+      "livepid": "600001863",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv5p",
+      "name": "CCTV-5+ 体育赛事",
+      "group": "央视",
+      "cnlid": "2024078211",
+      "livepid": "600001864",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv6",
+      "name": "CCTV-6 电影",
+      "group": "央视",
+      "cnlid": "2024078213",
+      "livepid": "600001865",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv7",
+      "name": "CCTV-7 国防军事",
+      "group": "央视",
+      "cnlid": "2024078215",
+      "livepid": "600001866",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv8",
+      "name": "CCTV-8 电视剧",
+      "group": "央视",
+      "cnlid": "2024078217",
+      "livepid": "600001867",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv9",
+      "name": "CCTV-9 纪录",
+      "group": "央视",
+      "cnlid": "2024078219",
+      "livepid": "600001868",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv10",
+      "name": "CCTV-10 科教",
+      "group": "央视",
+      "cnlid": "2024078221",
+      "livepid": "600001869",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv11",
+      "name": "CCTV-11 戏曲",
+      "group": "央视",
+      "cnlid": "2024078223",
+      "livepid": "600001870",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv12",
+      "name": "CCTV-12 社会与法",
+      "group": "央视",
+      "cnlid": "2024078225",
+      "livepid": "600001871",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv13",
+      "name": "CCTV-13 新闻",
+      "group": "央视",
+      "cnlid": "2024078227",
+      "livepid": "600001872",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv14",
+      "name": "CCTV-14 少儿",
+      "group": "央视",
+      "cnlid": "2024078229",
+      "livepid": "600001873",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv15",
+      "name": "CCTV-15 音乐",
+      "group": "央视",
+      "cnlid": "2024078231",
+      "livepid": "600001874",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv16",
+      "name": "CCTV-16 奥林匹克",
+      "group": "央视",
+      "cnlid": "2024078233",
+      "livepid": "600001875",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv17",
+      "name": "CCTV-17 农业农村",
+      "group": "央视",
+      "cnlid": "2024078235",
+      "livepid": "600001876",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv4k",
+      "name": "CCTV-4K 超高清",
+      "group": "央视",
+      "cnlid": "3000000003",
+      "livepid": "600002264",
+      "defn": "uhd",
+      "logo": ""
+    },
+    {
+      "id": "cctv8k",
+      "name": "CCTV-8K 超高清",
+      "group": "央视",
+      "cnlid": "3000000004",
+      "livepid": "600002265",
+      "defn": "uhd",
+      "logo": ""
+    },
+    {
+      "id": "cgtn",
+      "name": "CGTN 英语",
+      "group": "央视",
+      "cnlid": "2024078237",
+      "livepid": "600001877",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cgtn-doc",
+      "name": "CGTN 纪录",
+      "group": "央视",
+      "cnlid": "2024078243",
+      "livepid": "600001880",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cgtn-fra",
+      "name": "CGTN 法语",
+      "group": "央视",
+      "cnlid": "2024078239",
+      "livepid": "600001878",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cgtn-rus",
+      "name": "CGTN 俄语",
+      "group": "央视",
+      "cnlid": "2024078241",
+      "livepid": "600001879",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cgtn-ara",
+      "name": "CGTN 阿拉伯语",
+      "group": "央视",
+      "cnlid": "2024078245",
+      "livepid": "600001881",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "cgtn-spa",
+      "name": "CGTN 西班牙语",
+      "group": "央视",
+      "cnlid": "2024078247",
+      "livepid": "600001882",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "fy-drama",
+      "name": "风云剧场",
+      "group": "央视付费",
+      "cnlid": "2024078249",
+      "livepid": "600001883",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "fy-music",
+      "name": "风云音乐",
+      "group": "央视付费",
+      "cnlid": "2024078251",
+      "livepid": "600001884",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "fy-football",
+      "name": "风云足球",
+      "group": "央视付费",
+      "cnlid": "2024078253",
+      "livepid": "600001885",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "fy-golf",
+      "name": "高尔夫网球",
+      "group": "央视付费",
+      "cnlid": "2024078255",
+      "livepid": "600001886",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "btv",
+      "name": "北京卫视",
+      "group": "卫视",
+      "cnlid": "2024078301",
+      "livepid": "600001900",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "stv",
+      "name": "东方卫视",
+      "group": "卫视",
+      "cnlid": "2024078303",
+      "livepid": "600001901",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "gdtv",
+      "name": "广东卫视",
+      "group": "卫视",
+      "cnlid": "2024078305",
+      "livepid": "600001902",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "zjtv",
+      "name": "浙江卫视",
+      "group": "卫视",
+      "cnlid": "2024078307",
+      "livepid": "600001903",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "jstv",
+      "name": "江苏卫视",
+      "group": "卫视",
+      "cnlid": "2024078309",
+      "livepid": "600001904",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "hntv",
+      "name": "湖南卫视",
+      "group": "卫视",
+      "cnlid": "2024078311",
+      "livepid": "600001905",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "hbtv",
+      "name": "湖北卫视",
+      "group": "卫视",
+      "cnlid": "2024078313",
+      "livepid": "600001906",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "sdtv",
+      "name": "山东卫视",
+      "group": "卫视",
+      "cnlid": "2024078315",
+      "livepid": "600001907",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "hntv2",
+      "name": "河南卫视",
+      "group": "卫视",
+      "cnlid": "2024078317",
+      "livepid": "600001908",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "sctv",
+      "name": "四川卫视",
+      "group": "卫视",
+      "cnlid": "2024078319",
+      "livepid": "600001909",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "litv",
+      "name": "重庆卫视",
+      "group": "卫视",
+      "cnlid": "2024078321",
+      "livepid": "600001910",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "gxtv",
+      "name": "广西卫视",
+      "group": "卫视",
+      "cnlid": "2024078323",
+      "livepid": "600001911",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "xmtv",
+      "name": "厦门卫视",
+      "group": "卫视",
+      "cnlid": "2024078325",
+      "livepid": "600001912",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "bjkids",
+      "name": "卡酷少儿",
+      "group": "卫视",
+      "cnlid": "2024078327",
+      "livepid": "600001913",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "hktv",
+      "name": "深圳卫视",
+      "group": "卫视",
+      "cnlid": "2024078329",
+      "livepid": "600001914",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "tjtv",
+      "name": "天津卫视",
+      "group": "卫视",
+      "cnlid": "2024078331",
+      "livepid": "600001915",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "ahdtv",
+      "name": "安徽卫视",
+      "group": "卫视",
+      "cnlid": "2024078333",
+      "livepid": "600001916",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "fztv",
+      "name": "东南卫视",
+      "group": "卫视",
+      "cnlid": "2024078335",
+      "livepid": "600001917",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "gntv",
+      "name": "江西卫视",
+      "group": "卫视",
+      "cnlid": "2024078337",
+      "livepid": "600001918",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "hhtv",
+      "name": "河北卫视",
+      "group": "卫视",
+      "cnlid": "2024078339",
+      "livepid": "600001919",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "sxdtv",
+      "name": "山西卫视",
+      "group": "卫视",
+      "cnlid": "2024078341",
+      "livepid": "600001920",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "lntv",
+      "name": "辽宁卫视",
+      "group": "卫视",
+      "cnlid": "2024078343",
+      "livepid": "600001921",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "jltv",
+      "name": "吉林卫视",
+      "group": "卫视",
+      "cnlid": "2024078345",
+      "livepid": "600001922",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "hltv",
+      "name": "黑龙江卫视",
+      "group": "卫视",
+      "cnlid": "2024078347",
+      "livepid": "600001923",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "hunan-jj",
+      "name": "湖南金鹰纪实",
+      "group": "卫视",
+      "cnlid": "2024078349",
+      "livepid": "600001924",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "sxtv",
+      "name": "陕西卫视",
+      "group": "卫视",
+      "cnlid": "2024078351",
+      "livepid": "600001925",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "gstv",
+      "name": "甘肃卫视",
+      "group": "卫视",
+      "cnlid": "2024078353",
+      "livepid": "600001926",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "nxtv",
+      "name": "宁夏卫视",
+      "group": "卫视",
+      "cnlid": "2024078355",
+      "livepid": "600001927",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "qhtv",
+      "name": "青海卫视",
+      "group": "卫视",
+      "cnlid": "2024078357",
+      "livepid": "600001928",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "xjtv",
+      "name": "新疆卫视",
+      "group": "卫视",
+      "cnlid": "2024078359",
+      "livepid": "600001929",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "xztv",
+      "name": "西藏卫视",
+      "group": "卫视",
+      "cnlid": "2024078361",
+      "livepid": "600001930",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "mntv",
+      "name": "内蒙古卫视",
+      "group": "卫视",
+      "cnlid": "2024078363",
+      "livepid": "600001931",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "yntv",
+      "name": "云南卫视",
+      "group": "卫视",
+      "cnlid": "2024078365",
+      "livepid": "600001932",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "gztv",
+      "name": "贵州卫视",
+      "group": "卫视",
+      "cnlid": "2024078367",
+      "livepid": "600001933",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "hainan",
+      "name": "海南卫视",
+      "group": "卫视",
+      "cnlid": "2024078369",
+      "livepid": "600001934",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "hkbtn",
+      "name": "香港 BTN",
+      "group": "港澳",
+      "cnlid": "2024078371",
+      "livepid": "600001935",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "macao",
+      "name": "澳门卫视",
+      "group": "港澳",
+      "cnlid": "2024078373",
+      "livepid": "600001936",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "tvb",
+      "name": "TVBS",
+      "group": "港澳",
+      "cnlid": "2024078375",
+      "livepid": "600001937",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "hk1",
+      "name": "香港卫视",
+      "group": "港澳",
+      "cnlid": "2024078377",
+      "livepid": "600001938",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "twa",
+      "name": "中天亚洲",
+      "group": "港澳",
+      "cnlid": "2024078379",
+      "livepid": "600001939",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "twb",
+      "name": "CTV中视",
+      "group": "港澳",
+      "cnlid": "2024078381",
+      "livepid": "600001940",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "twc",
+      "name": "CTS华视",
+      "group": "港澳",
+      "cnlid": "2024078383",
+      "livepid": "600001941",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "twd",
+      "name": "FTV民视",
+      "group": "港澳",
+      "cnlid": "2024078385",
+      "livepid": "600001942",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "twe",
+      "name": "PTS公视",
+      "group": "港澳",
+      "cnlid": "2024078387",
+      "livepid": "600001943",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "bye",
+      "name": "凤凰中文",
+      "group": "港澳",
+      "cnlid": "2024078389",
+      "livepid": "600001944",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "bye2",
+      "name": "凤凰资讯",
+      "group": "港澳",
+      "cnlid": "2024078391",
+      "livepid": "600001945",
+      "defn": "fhd",
+      "logo": ""
+    },
+    {
+      "id": "bye3",
+      "name": "凤凰香港",
+      "group": "港澳",
+      "cnlid": "2024078393",
+      "livepid": "600001946",
+      "defn": "fhd",
+      "logo": ""
+    }
+  ],
+  "custom": []
+}
